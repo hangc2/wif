@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include "common.h"
+#include <string>
 
 /* this file is cmd dispatcher 
  send one cmd through UART prompt to exec a cmd

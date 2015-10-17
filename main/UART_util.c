@@ -5,9 +5,11 @@
 #include "common.h"
 #include "UART_util.h"
 
+
 bool read_UART(char* cmd_str, uint8 cmd_len , char* screen_print)
 {
   int16 ret_val = 0;
+  bool received = false;
   if(cmd_str == NULL)
   {
     UART_PRINT("read_UART failed, cmd_str is NULL\n");
@@ -32,7 +34,15 @@ bool read_UART(char* cmd_str, uint8 cmd_len , char* screen_print)
     }
     ret_val = GetCmd(cmd_str, cmd_len);
     if(ret_val > 0)
-
-  }while(!ret_val)
+    {
+      ret_val = TrimSpace(cmd_str);
+      if(cmd_str!=NULL)
+      {
+        cmd_str[ret_val] = '\0'a
+	received = true;
+      }
+    }
+  }while(!received)
+  return received;
 }
 

@@ -177,7 +177,7 @@ bool get_wifi_info(char* ssid, SlSecParams_t &secPrams)
           // Parse the AP name
           //
           strncpy(ssid, acCmdStore, lRetVal);
-          if(ssid != NULL)
+          if(ssi != NULL)
           {
               ret_val = TRUE;
               ssid[lRetVal] = '\0';
