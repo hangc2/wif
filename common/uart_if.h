@@ -65,7 +65,7 @@ extern "C"
 //
 // Define the UART IF buffer
 //
-extern unsigned char g_ucUARTBuffer[];
+unsigned char g_ucUARTBuffer[UART_IF_BUFFER];
 
 
 /****************************************************************************/

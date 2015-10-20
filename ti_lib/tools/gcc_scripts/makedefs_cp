@@ -1,6 +1,6 @@
 #******************************************************************************
 #
-# Makedefs - Common rules for GCC Makefile
+# Makedefs - Common rules for g++ Makefile
 #
 #  Copyright (C) 2014 Texas Instruments Incorporated - http:#www.ti.com/
 #
@@ -64,34 +64,34 @@ BINDIR?=exe
 #
 #******************************************************************************
 ifndef COMPILER
-COMPILER=gcc
+COMPILER=g++
 endif
 
 #******************************************************************************
 #
-# Definitions for using GCC.
+# Definitions for using g++.
 #
 #******************************************************************************
-ifeq (${COMPILER}, gcc)
+ifeq (${COMPILER}, g++)
 
 #
 # Get the prefix for the tools to use.  Use arm-stellaris-eabi if it exists,
 # otherwise fall back to arm-none-eabi.
 #
-PREFIX:=${shell type arm-stellaris-eabi-gcc > /dev/null 2>&1 && \
+PREFIX:=${shell type arm-stellaris-eabi-g++ > /dev/null 2>&1 && \
          echo arm-stellaris-eabi || echo arm-none-eabi}
 
 #
 # The command for calling the compiler.
 #
-CC=${PREFIX}-gcc
+CC=${PREFIX}-g++
 
 #
 # The location of the C compiler
-# ARMGCC_ROOT is used by some makefiles that need to know where the compiler
+# ARMg++_ROOT is used by some makefiles that need to know where the compiler
 # is installed.
 #
-ARMGCC_ROOT:=${shell dirname '${shell sh -c "which ${CC}"}'}/..
+ARMg++_ROOT:=${shell dirname '${shell sh -c "which ${CC}"}'}/..
 
 #
 # Set the compiler CPU/FPU options.
@@ -116,10 +116,11 @@ CFLAGS=-mthumb             \
        -ffunction-sections \
        -fdata-sections     \
        -MD                 \
-       -std=c99            \
+#     -std=c99            \
        -g 		   \
        -O0 		   \
-       -c                  
+       -c          \
+       -x none
 
 #
 # The command for calling the library archiver.
@@ -138,17 +139,17 @@ LDFLAGS=--gc-sections
 
 
 #
-# Get the location of libgcc.a from the GCC front-end.
+# Get the location of libg++.a from the g++ front-end.
 #
-LIBGCC:=${shell ${CC} -mthumb ${CFLAGS} -print-libgcc-file-name}
+LIBg++:=${shell ${CC} -mthumb ${CFLAGS} -print-libgcc-file-name}
 
 #
-# Get the location of libc.a from the GCC front-end.
+# Get the location of libc.a from the g++ front-end.
 #
 LIBC:=${shell ${CC} ${CFLAGS} -print-file-name=libc.a}
 
 #
-# Get the location of libm.a from the GCC front-end.
+# Get the location of libm.a from the g++ front-end.
 #
 LIBM:=${shell ${CC} ${CFLAGS} -print-file-name=libm.a}
 
@@ -160,7 +161,7 @@ OBJCOPY=${PREFIX}-objcopy
 #
 # Add the tool specific CFLAGS.
 #
-CFLAGS+=${CFLAGSgcc}
+CFLAGS+=${CFLAGSg++}
 
 #
 # Add the include file paths to AFLAGS and CFLAGS.
@@ -171,7 +172,8 @@ CFLAGS+=${patsubst %,-I%,${subst :, ,${IPATH}}}
 #
 # The rule for building the object file from each C source file.
 #
-${OBJDIR}/%.o: %.c
+${OBJDIR}/%.o: %.cpp
+${OBJDIR}/pinmux.o: pinmux.c
 	@if [ 'x${VERBOSE}' = x ];                            \
 	 then                                                 \
 	     echo "  CC    ${<}";                             \
@@ -185,9 +187,6 @@ ifneq ($(findstring CYGWIN, ${os}), )
 		sed -i -r 's/ ([A-Za-z]):/ \/cygdrive\/\1/g' ${@:.o=.d} ; \
 	fi
 endif
-
-${OBJDIR}/%.o: %.cpp
-	@${CC} ${CFLAGS} -D${COMPILER} -o ${@} ${<}
 
 #
 # The rule for building the object file from each assembly source file.
@@ -223,11 +222,11 @@ ${BINDIR}/%.a:
 # The rule for linking the application.
 #
 ${BINDIR}/%.axf:
-	@if [ 'x${SCATTERgcc_${notdir ${@:.axf=}}}' = x ];                    \
+	@if [ 'x${SCATTERg++_${notdir ${@:.axf=}}}' = x ];                    \
 	 then                                                                 \
-	     ldname="${ROOT}/gcc/standalone.ld";                              \
+	     ldname="${ROOT}/g++/standalone.ld";                              \
 	 else                                                                 \
-	     ldname="${SCATTERgcc_${notdir ${@:.axf=}}}";                     \
+	     ldname="${SCATTERg++_${notdir ${@:.axf=}}}";                     \
 	 fi;                                                                  \
 	 if [ 'x${VERBOSE}' = x ];                                            \
 	 then                                                                 \
@@ -235,15 +234,15 @@ ${BINDIR}/%.axf:
 	 else                                                                 \
 	     echo ${LD} -T $${ldname}                                         \
 	          --entry ${ENTRY_${notdir ${@:.axf=}}}                       \
-	          ${LDFLAGSgcc_${notdir ${@:.axf=}}}                          \
+	          ${LDFLAGSg++_${notdir ${@:.axf=}}}                          \
 	          ${LDFLAGS} -o ${@} $(filter %.o %.a, ${^})                  \
-	          '${LIBM}' '${LIBC}' '${LIBGCC}';                            \
+	          '${LIBM}' '${LIBC}' '${LIBg++}';                            \
 	 fi;                                                                  \
 	${LD} -T $${ldname}                                                   \
 	      --entry ${ENTRY_${notdir ${@:.axf=}}}                           \
-	      ${LDFLAGSgcc_${notdir ${@:.axf=}}}                              \
+	      ${LDFLAGSg++_${notdir ${@:.axf=}}}                              \
 	      ${LDFLAGS} -o ${@} $(filter %.o %.a, ${^})                      \
-	      '${LIBM}' '${LIBC}' '${LIBGCC}'
+	      '${LIBM}' '${LIBC}' '${LIBg++}'
 	@${OBJCOPY} -O binary ${@} ${@:.axf=.bin}
 endif
 

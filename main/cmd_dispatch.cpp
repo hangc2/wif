@@ -2,8 +2,8 @@
 
 #include <stdlib.h>
 #include "common.h"
-#include <string>
 #include "cmd_dispatch.h"
+#include "UART_util.h"
 
 /* this file is cmd dispatcher 
  send one cmd through UART prompt to exec a cmd
@@ -36,15 +36,16 @@ TM_CMD_type get_tm_cmd(void)
 {
   TM_CMD_type cmd = INVALID_CMD;
   bool status = true;
+  const char* screen = "enter_whatever";
   uint8 cmd_num = 0xFF;
-  char* cmd_str[TM_CMD_LEN];
+  char cmd_str[TM_CMD_LEN];
   do{
-    status = read_UART(cmd_str);
+    status = read_UART(cmd_str, TM_CMD_LEN, screen);
     if(status)
     {
       cmd_num = atoi(cmd_str);
     }
   }while(cmd_num >= TM_CMD_MAX);
-  cmd = (tm_cmd)cmd_num;
+  cmd = (TM_CMD_type)cmd_num;
   return cmd;
 }

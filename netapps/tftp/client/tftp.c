@@ -703,7 +703,7 @@ ABORT:
     return(rc);
 }
 
-int sl_TftpRecv( unsigned long TftpIP, char *szFileName, char *FileBuffer,
+int sl_TftpRecv( unsigned long TftpIP, const char *szFileName, char *FileBuffer,
                 unsigned long *FileSize, unsigned short *pErrorCode )
 {
     TFTP *pTftp;
@@ -773,7 +773,7 @@ ABORT:
 }
 
 
-int sl_TftpSend( unsigned long TftpIP, char *szFileName, char *FileBuffer,
+int sl_TftpSend( unsigned long TftpIP, const char *szFileName, char *FileBuffer,
                 unsigned long *FileSize, unsigned short *pErrorCode )
 {
     TFTP *pTftp;

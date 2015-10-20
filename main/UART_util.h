@@ -11,7 +11,7 @@
 
 //  function prototype
 
-bool read_UART(char* cmd_str, uint8 cmd_len , char* screen_print);
+bool read_UART(char* cmd_str, uint8 cmd_len , const char* screen_print);
 
 
 

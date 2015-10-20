@@ -50,7 +50,7 @@
   *          						This API is called from the application to initiate the receive.
   */
 
-int sl_TftpRecv( unsigned long TftpIP, char *szFileName, char *FileBuffer,unsigned long *FileSize, unsigned short *pErrorCode );
+int sl_TftpRecv( unsigned long TftpIP, const char *szFileName, char *FileBuffer,unsigned long *FileSize, unsigned short *pErrorCode );
 
 /*!
  * 	\brief Send data over TFTP
@@ -75,7 +75,7 @@ int sl_TftpRecv( unsigned long TftpIP, char *szFileName, char *FileBuffer,unsign
  *
  */
 
-int sl_TftpSend( unsigned long TftpIP, char *szFileName, char *FileBuffer,unsigned long *FileSize, unsigned short *pErrorCode );
+int sl_TftpSend( unsigned long TftpIP, const char *szFileName, char *FileBuffer,unsigned long *FileSize, unsigned short *pErrorCode );
 
 
 #define  bzero(ptr,sz)       mmZeroInit(ptr,sz)

@@ -69,10 +69,11 @@
 #include "common.h"
 
 //App includes
-#include "pinmux.h"
+
 #include "datatypes.h"
 #include "tftp.h"
-	
+#include "cmd_dispatch.h"
+
 
 
 //*****************************************************************************
@@ -85,7 +86,7 @@ extern void (* const g_pfnVectors[])(void);
 extern uVectorEntry __vector_table;
 #endif
 extern void (* const g_pfnVectors[])(void);
-
+extern "C" void PinMuxConfig(void);
 //*****************************************************************************
 //                          LOCAL DEFINES
 //*****************************************************************************
@@ -112,7 +113,7 @@ extern void (* const g_pfnVectors[])(void);
 //*****************************************************************************
 
 static void
-DisplayBanner(char * AppName)
+DisplayBanner(const char * AppName)
 {
     Report("\n\n\n\r");
     Report("\t\t *************************************************\n\r");
@@ -153,70 +154,6 @@ BoardInit(void)
 
     PRCMCC3200MCUInit();
 }
-#if 0
-bool get_wifi_info(char* ssid, SlSecParams_t &secPrams)
-{
-  bool ret_val = TRUE;
-  char* ssid = NULL;
-  char* security_type=NULL;
-  do
-  {
-      ret_val = FALSE;
-
-      UART_PRINT("\n\r\n\rPlease enter the AP(open) SSID name # ");
-
-      //
-      // Get the AP name to connect over the UART
-      //
-      lRetVal = GetCmd(acCmdStore, sizeof(acCmdStore));
-      if(lRetVal > 0)
-      {
-          // remove start/end spaces if any
-          lRetVal = TrimSpace(acCmdStore);
-
-          //
-          // Parse the AP name
-          //
-          strncpy(ssid, acCmdStore, lRetVal);
-          if(ssi != NULL)
-          {
-              ret_val = TRUE;
-              ssid[lRetVal] = '\0';
-          }
-      }
-  }while(ret_val == FALSE);
-
-  do
-  {
-      ret_val = FALSE;
-
-      UART_PRINT("\n\r\n\rPlease enter the AP serurity type 0=OPEN | 2=WPA2|WEP # ");
-
-      //
-      // Get the AP name to connect over the UART
-      //
-      lRetVal = GetCmd(acCmdStore, sizeof(acCmdStore));
-      if(lRetVal > 0)
-      {
-          // remove start/end spaces if any
-          lRetVal = TrimSpace(acCmdStore);
-
-          //
-          // Parse the AP name
-          //
-          strncpy(security_type, acCmdStore, lRetVal);
-          if(pcSsid != NULL)
-          {
-              if(pcSsid == '')
-              ret_val = TRUE;
-              pcSsid[lRetVal] = '\0';
-          }
-      }
-  }while(ret_val == FALSE);
-
-  return ret_val;
-}
-#endif
 
 static void TFTPTask(void *pvParameters)
 {
@@ -224,8 +161,8 @@ static void TFTPTask(void *pvParameters)
     unsigned char *pucFileBuffer = NULL;  // Data read or to be written
     unsigned long uiFileSize;
 
-    char *FileRead = "readFromServer.txt";  // File to be read using TFTP. Change string to filename
-    char *FileWrite = "writeToServer.txt"; // File to be written using TFTP. Change string to filename.
+    const char *FileRead = "readFromServer.txt";  // File to be read using TFTP. Change string to filename
+    const char *FileWrite = "writeToServer.txt"; // File to be written using TFTP. Change string to filename.
 
     long pFileHandle;			// Pointer to file handle
     SlFsFileInfo_t pFsFileInfo;
@@ -237,17 +174,16 @@ static void TFTPTask(void *pvParameters)
   //  get_wifi_info(ap_ssid, secPrams);
 
     // Configuring security parameters for the AP
-    secParams.Key = SSID_KEY;
+    secParams.Key = (_i8*)SSID_KEY;
     secParams.KeyLen = 30;
     secParams.Type = SL_SEC_TYPE_WPA_WPA2;
 
     lRetVal = Network_IF_InitDriver(ROLE_STA);
 
 
-
     // Connecting to WLAN AP - Set with static parameters defined at the top
     // After this call we will be connected and have IP address
-    lRetVal = Network_IF_ConnectAP(SSID,secParams);
+    lRetVal = Network_IF_ConnectAP((char*)SSID,secParams);
 
     UART_PRINT("Connecting to TFTP server %d.%d.%d.%d\n\r",\
                   SL_IPV4_BYTE(TFTP_IP, 3),SL_IPV4_BYTE(TFTP_IP, 2),
@@ -256,7 +192,7 @@ static void TFTPTask(void *pvParameters)
     {
         uiFileSize = FILE_SIZE_MAX;
 
-        pucFileBuffer = malloc(uiFileSize);
+        pucFileBuffer = new unsigned char[uiFileSize];
         if(NULL == pucFileBuffer)
         {
             UART_PRINT("Can't Allocate Resources\r\n");
@@ -276,7 +212,7 @@ static void TFTPTask(void *pvParameters)
             LOOP_FOREVER();
         }
 
-        lRetVal = sl_FsGetInfo((unsigned char *)FileRead, NULL, (uint16*)&pFsFileInfo);
+        lRetVal = sl_FsGetInfo((unsigned char *)FileRead, 0, &pFsFileInfo);
 
         if(lRetVal < 0 )
             lRetVal = sl_FsOpen((unsigned char *)FileRead,\
@@ -321,7 +257,7 @@ static void TFTPTask(void *pvParameters)
             LOOP_FOREVER();
         }
 
-        lRetVal = sl_FsGetInfo((unsigned char *)FileRead, NULL, &pFsFileInfo);
+        lRetVal = sl_FsGetInfo((unsigned char *)FileRead, 0, &pFsFileInfo);
         if(lRetVal < 0)
         {
             lRetVal = sl_FsClose(pFileHandle,0,0,0);
@@ -358,35 +294,13 @@ static void TFTPTask(void *pvParameters)
     LOOP_FOREVER();
 }
 
-enum cmd_str{
-	TFTP,
-	CAMERA,
-	INVALID_CMD
-};
 
-#define CMD_LEN 10
-
-/*  trasform str to int  */
-
-uint8 str_to_int(char* str)
-{
-	//  0xFF is not valid number
-	uint8 num = 0xFF;
-	if(str==NULL)
-	{
-		return num;
-	}
-	while(*str!='\n')
-	{
-
-	}
-}
 
 
 //****************************************************************************
 //							MAIN FUNCTION
 //****************************************************************************
-void main()
+int main()
 {
     long lRetVal = -1;
     //
@@ -423,7 +337,7 @@ void main()
     // Start the Receiving file
     //
 
-    lRetVal = osi_TaskCreate(TFTPTask,
+    lRetVal = osi_TaskCreate(cmd_dispatcher,
                     (const signed char *)"TFTP",
                     OSI_STACK_SIZE,
                     NULL,
@@ -439,5 +353,5 @@ void main()
     // Start the task scheduler
     //
     osi_start();
-
+    return 0;
 }

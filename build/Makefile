@@ -125,12 +125,13 @@ ${BINDIR}:
 # Rules for building the main example.
 #
 ${BINDIR}/main.axf: ${OBJDIR}/network_if.o
-${BINDIR}/main.axf: ${OBJDIR}/main.o
 ${BINDIR}/main.axf: ${OBJDIR}/pinmux.o
 ${BINDIR}/main.axf: ${OBJDIR}/gpio_if.o
 ${BINDIR}/main.axf: ${OBJDIR}/uart_if.o
 ${BINDIR}/main.axf: ${OBJDIR}/tftp.o
 ${BINDIR}/main.axf: ${OBJDIR}/udma_if.o
+${BINDIR}/main.axf: ${OBJDIR}/main.o
+${BINDIR}/main.axf: ${OBJDIR}/cmd_dispatch.o
 ${BINDIR}/main.axf: ${OBJDIR}/startup_${COMPILER}.o
 ${BINDIR}/main.axf: ${TI_LIB}/simplelink/${COMPILER}/${BINDIR}/libsimplelink.a
 ${BINDIR}/main.axf: ${TI_LIB}/driverlib/${COMPILER}/${BINDIR}/libdriver.a

@@ -7,7 +7,7 @@
 #include "UART_util.h"
 
 
-bool read_UART(char* cmd_str, uint8 cmd_len , char* screen_print)
+bool read_UART(char* cmd_str, uint8 cmd_len , const char* screen_print)
 {
   int16 ret_val = 0;
   bool received = false;

@@ -368,9 +368,6 @@ typedef _u8   _SlArgSize_t;
 typedef _i16   _SlDataSize_t;
 typedef _i16   _SlReturnVal_t;
 
-#ifdef    __cplusplus
-}
-#endif /*  __cplusplus */
 
 
 
@@ -444,7 +441,7 @@ typedef _i16   _SlReturnVal_t;
 
 
 
-#define __CONCAT(x,y)	x ## y
+//#define __CONCAT(x,y)	x ## y
 #define __CONCAT2(x,y)	__CONCAT(x,y)
 
 
@@ -943,7 +940,7 @@ extern void sl_HttpServerCallback(SlHttpServerEvent_t *pSlHttpServerEvent, SlHtt
  @}
 
  */
- 
+
 #ifdef  __cplusplus
 }
 #endif /* __cplusplus */

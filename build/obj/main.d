@@ -1,4 +1,4 @@
-obj/main.o: ../main/main.c \
+obj/main.o: ../main/main.cpp \
  /usr/local/Cellar/gcc-arm-none-eabi/20140805/arm-none-eabi/include/stdlib.h \
  /usr/local/Cellar/gcc-arm-none-eabi/20140805/arm-none-eabi/include/machine/ieeefp.h \
  /usr/local/Cellar/gcc-arm-none-eabi/20140805/arm-none-eabi/include/_ansi.h \
@@ -13,6 +13,7 @@ obj/main.o: ../main/main.c \
  /usr/local/Cellar/gcc-arm-none-eabi/20140805/arm-none-eabi/include/machine/_default_types.h \
  /usr/local/Cellar/gcc-arm-none-eabi/20140805/arm-none-eabi/include/sys/lock.h \
  /usr/local/Cellar/gcc-arm-none-eabi/20140805/arm-none-eabi/include/machine/stdlib.h \
+ /usr/local/Cellar/gcc-arm-none-eabi/20140805/arm-none-eabi/include/alloca.h \
  ../ti_lib/sdk_inc/hw_types.h ../ti_lib/sdk_inc/hw_ints.h \
  ../ti_lib/sdk_inc/hw_memmap.h ../ti_lib/driverlib/interrupt.h \
  ../ti_lib/driverlib/prcm.h ../ti_lib/driverlib/rom.h \
@@ -34,5 +35,5 @@ obj/main.o: ../main/main.c \
  ../ti_lib/simplelink/include/wlan_rx_filters.h \
  ../ti_lib/simplelink/include/../source/spawn.h ../common/network_if.h \
  ../common/uart_if.h ../common/udma_if.h ../common/common.h \
- ../main/pinmux.h ../netapps/tftp/client/datatypes.h \
- ../netapps/tftp/client/tftp.h
+ ../netapps/tftp/client/datatypes.h ../netapps/tftp/client/tftp.h \
+ ../main/cmd_dispatch.h
