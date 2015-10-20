@@ -2,6 +2,7 @@
 */
 
 #include <stdlib.h>
+#include <string.h>
 #include "common.h"
 #include "UART_util.h"
 
@@ -45,4 +46,6 @@ bool read_UART(char* cmd_str, uint8 cmd_len , char* screen_print)
   }while(!received)
   return received;
 }
+
+
 

@@ -72,6 +72,7 @@
 #include "pinmux.h"
 #include "datatypes.h"
 #include "tftp.h"
+	
 
 
 //*****************************************************************************
@@ -275,7 +276,7 @@ static void TFTPTask(void *pvParameters)
             LOOP_FOREVER();
         }
 
-        lRetVal = sl_FsGetInfo((unsigned char *)FileRead, NULL, &pFsFileInfo);
+        lRetVal = sl_FsGetInfo((unsigned char *)FileRead, NULL, (uint16*)&pFsFileInfo);
 
         if(lRetVal < 0 )
             lRetVal = sl_FsOpen((unsigned char *)FileRead,\
@@ -381,46 +382,6 @@ uint8 str_to_int(char* str)
 	}
 }
 
-static void cmd_dispatch(void *pvParameters)
-{
-	cmd_ptr cmd = INVALID_CMD;
-	uint8 rcv_cmd = 0;
-	char input_str[CMD_LEN];
-	int8 ret_val = 0;
-	do{
-		//  get cmd from prompt
-        do
-        {
-        	rcv_cmd = 0;
-
-            UART_PRINT("\n\r\n\rPlease enter CMD # ");
-
-            //
-            // Get the command over the UART
-            //
-            ret_val = GetCmd(input_str, sizeof(input_str));
-            if(ret_val > 0)
-            {
-                // remove start/end spaces if any
-                ret_val = TrimSpace(input_str);
-
-                //
-                // Parse the cmd
-                //
-                strncpy(pcSsid, acCmdStore, lRetVal);
-                if(input_str[1] != NULL)
-                {
-                    ucRecvdAPDetails = 1;
-                    pcSsid[lRetVal] = '\0';
-
-                }
-            }
-        }while(rcv_cmd == 0);
-
-		UART_PRINT("CMD Dispatch#\n");
-
-	}while(1);
-}
 
 //****************************************************************************
 //							MAIN FUNCTION

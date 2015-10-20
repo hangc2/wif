@@ -135,7 +135,7 @@ ${BINDIR}/main.axf: ${OBJDIR}/startup_${COMPILER}.o
 ${BINDIR}/main.axf: ${TI_LIB}/simplelink/${COMPILER}/${BINDIR}/libsimplelink.a
 ${BINDIR}/main.axf: ${TI_LIB}/driverlib/${COMPILER}/${BINDIR}/libdriver.a
 ${BINDIR}/main.axf: ${TI_LIB}/oslib/${COMPILER}/${BINDIR}/FreeRTOS.a
-
+${BINDIR}/main.axf: ${ROOT}/netapps/tftp/client/tftp.o
 
 
 
